@@ -1,31 +1,31 @@
-//your JS code here. If required.
 document.addEventListener("DOMContentLoaded", () => {
-    const outputTable = document.getElementById("output");
+    const output = document.getElementById("output");
 
-    function createPromise(index) {
-        const delay = Math.random() * (3 - 1) + 1; // Random time between 1 and 3 seconds
+    function createPromise(id) {
+        const time = (Math.random() * 2 + 1).toFixed(3); 
         return new Promise(resolve => {
-            setTimeout(() => resolve({ index, time: delay.toFixed(3) }), delay * 1000);
+            setTimeout(() => resolve({ id, time }), time * 1000);
         });
     }
 
     const promises = [createPromise(1), createPromise(2), createPromise(3)];
 
     Promise.all(promises).then(results => {
-        // Remove "Loading..." row
-        outputTable.innerHTML = "";
+        const loadingRow = document.getElementById("loading");
+        if (loadingRow) loadingRow.remove(); // Remove loading row after promises resolve
 
-        // Populate table with resolved promise times
         results.forEach(result => {
-            const row = document.createElement("tr");
-            row.innerHTML = `<td>Promise ${result.index}</td><td>${result.time}</td>`;
-            outputTable.appendChild(row);
+            const row = `<tr>
+                            <td>Promise ${result.id}</td>
+                            <td>${result.time}</td>
+                        </tr>`;
+            output.innerHTML += row;
         });
 
-        // Calculate the max time taken (total execution time)
-        const maxTime = Math.max(...results.map(r => parseFloat(r.time)));
-        const totalRow = document.createElement("tr");
-        totalRow.innerHTML = `<td><strong>Total</strong></td><td><strong>${maxTime.toFixed(3)}</strong></td>`;
-        outputTable.appendChild(totalRow);
+        const maxTime = Math.max(...results.map(r => parseFloat(r.time))).toFixed(3);
+        output.innerHTML += `<tr class="table-secondary">
+                                <td><strong>Total</strong></td>
+                                <td><strong>${maxTime}</strong></td>
+                            </tr>`;
     });
 });
